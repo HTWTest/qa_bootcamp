@@ -1,64 +1,120 @@
-<project name="Webdriver" default="runSearchTests" basedir=".">
-	<description>
+<project
+    name="Flipkart_Framework"
+    basedir="."
+    default="runSearchTests" >
+
+    <description>
         simple example build file
     </description>
-	<!-- set global properties for this build -->
-	
-	<property name="src.dir" location="src"/>
-	<property name="lib.dir"  location="lib"/>
-	<property name="build.dir" location="build"/>
-	
-	<path id="classpath">
-	    <fileset dir="${lib.dir}" includes="**/*.jar"/>
-		<pathelement location="${lib.dir}/junit.jar"/>
-		<pathelement location="${lib.dir}/selenium-java-2.25.0.jar"/>
-		<pathelement location="${lib.dir}/jxl.jar"/>
-		<pathelement location="${build.dir}"/>
-	</path>
-	
- 
-	<target name="clean" description="clean up" >
-		<!-- Delete the ${build} and ${dist} directory trees -->
-		<delete dir="${build.dir}"/>
-	</target>
-	
-	<target name="init">
-		<!-- Create the time stamp -->
-		<tstamp/>
-		<!-- Create the build directory structure used by compile -->
-		<mkdir dir="${build.dir}"/>
-		<copy todir="${build.dir}">
-            <fileset dir="${lib.dir}"/>
-        </copy>
-		<copy todir="${build.dir}">
-            <fileset dir="${lib.dir}" includes="**/*.jar"/>
-        </copy>
-		<copy todir="${build.dir}">
-            <fileset dir="${src.dir}" excludes="**/*.java" includes="App.properties"/>
+    <!-- set global properties for this build -->
+
+    <property
+        name="src.dir"
+        location="${basedir}/src" />
+
+    <property
+        name="lib.dir"
+        location="${basedir}/lib" />
+
+    <property
+        name="build.dir"
+        location="${basedir}/build" />
+
+    <property
+        name="test.dir"
+        location="${basedir}/results" />
+
+    <path id="classpath" >
+
+        <fileset
+            dir="${lib.dir}"
+            includes="**/*.jar" />
+
+        <pathelement location="${lib.dir}/junit.jar" />
+
+        <pathelement location="${lib.dir}/selenium-server-standalone-2.15.0.jar" />
+
+        <pathelement location="${build.dir}" />
+    </path>
+
+    <target
+        name="clean"
+        description="clean up" >
+
+        <!-- Delete the ${build} and ${dist} directory trees -->
+
+        <delete dir="${build.dir}" />
+
+        <delete dir="${test.dir}" />
+    </target>
+
+    <target name="init" >
+
+        <!-- Create the time stamp -->
+
+        <tstamp />
+        <!-- Create the build directory structure used by compile -->
+
+        <mkdir dir="${build.dir}" />
+
+        <mkdir dir="${test.dir}" />
+
+        <copy todir="${build.dir}" >
+
+            <fileset
+                dir="${lib.dir}"
+                includes="**/*.jar" />
         </copy>
 
-	</target>
-	
-	<target name="compile" description="compile the source " depends="clean,init">
-		<!-- Compile the java code from ${src.dir} into ${build.dir} -->
-		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref = "classpath" includeantruntime="false"/>
-	</target>
-	
-	<target name="runSearchTests" description ="runnning test" depends="compile"/>
-	<junit printsummary="yes" haltonfailure="yes">
-       <classpath>
-      	 <pathelement location="${build.dir}"/>
-      	 <pathelement location="${lib.dir}/junit.jar"/>
-       	<pathelement location="${lib.dir}/selenium-server-standalone-2.24.1.jar"/>
-       </classpath>
-       <formatter type="plain"/>
-    
-       <batchtest fork="yes" todir="${build.dir}">
-       <fileset dir="${src.dir}">
-       <include name="*/.java"/>
-       <exclude name="**/AllTests.java"/>
-       </fileset>
-       </batchtest>
-    </junit>
-	
+        <copy todir="${build.dir}" >
+
+            <fileset
+                dir="${src.dir}"
+                excludes="**/*.java"
+                includes="App.properties" />
+        </copy>
+    </target>
+
+    <target
+        name="compile"
+        depends="clean,init"
+        description="compile the source " >
+
+        <!-- Compile the java code from ${src.dir} into ${build.dir} -->
+
+        <javac
+            classpathref="classpath"
+            destdir="${build.dir}"
+            includeantruntime="false"
+            srcdir="${src.dir}" />
+    </target>
+
+    <target
+        name="runSearchTests"
+        depends="compile"
+        description="Run JUnit Tests" >
+
+        <junit
+            haltonfailure="no"
+            printsummary="yes"
+            showoutput="true" >
+
+            <classpath refid="classpath" />
+
+            <formatter type="xml" />
+
+            <batchtest
+                fork="yes"
+                todir="${test.dir}" >
+
+                <fileset dir="${src.dir}" >
+
+                    <include name="**/*.java" />
+
+                    <exclude name="**/*Page.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
 </project>
